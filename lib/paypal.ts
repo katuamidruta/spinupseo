@@ -5,9 +5,9 @@ const PAYPAL_BASE = process.env.PAYPAL_MODE === "live"
   : "https://api-m.sandbox.paypal.com";
 
 async function getAccessToken(): Promise<string> {
-  const clientId = process.env.PAYPAL_CLIENT_ID!;
-  const secret = process.env.PAYPAL_SECRET!;
-  const credentials = Buffer.from(`${clientId}:${secret}`).toString("base64");
+  const credentials = Buffer.from(
+    `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`
+  ).toString("base64");
 
   const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
     method: "POST",
@@ -35,13 +35,10 @@ export async function createPayPalOrder(amountUSD: number, description: string) 
       intent: "CAPTURE",
       purchase_units: [{
         description,
-        amount: {
-          currency_code: "USD",
-          value: (amountUSD / 100).toFixed(2),
-        },
+        amount: { currency_code: "USD", value: (amountUSD / 100).toFixed(2) },
       }],
       application_context: {
-        brand_name: "LinkForge",
+        brand_name: "SpinupSEO",
         shipping_preference: "NO_SHIPPING",
         user_action: "PAY_NOW",
       },
@@ -69,87 +66,12 @@ export async function capturePayPalOrder(orderId: string) {
   }>;
 }
 
-export const PACKAGES = [
-  {
-    id: "starter",
-    name: "Starter",
-    slug: "starter",
-    price: 4900,
-    priceLabel: "$49",
-    linksMin: 5,
-    linksMax: 8,
-    drMin: 30,
-    description: "Establish your initial domain authority",
-    features: [
-      "5–8 editorial placements",
-      "DR 30+ domains only",
-      "Niche-relevant sites",
-      "Monthly report",
-      "Email support",
-    ],
-    highlight: false,
-  },
-  {
-    id: "growth",
-    name: "Growth",
-    slug: "growth",
-    price: 14900,
-    priceLabel: "$149",
-    linksMin: 15,
-    linksMax: 20,
-    drMin: 40,
-    description: "Accelerate your ranking momentum",
-    features: [
-      "15–20 editorial placements",
-      "DR 40+ domains only",
-      "Traffic-vetted sites (10k+/mo)",
-      "Anchor text strategy",
-      "Monthly report + metrics",
-      "Priority support",
-    ],
-    highlight: true,
-  },
-  {
-    id: "authority",
-    name: "Authority",
-    slug: "authority",
-    price: 34900,
-    priceLabel: "$349",
-    linksMin: 35,
-    linksMax: 50,
-    drMin: 50,
-    description: "Dominate your niche",
-    features: [
-      "35–50 editorial placements",
-      "DR 50+ domains only",
-      "High-traffic publications",
-      "Full anchor strategy",
-      "Competitor gap analysis",
-      "Detailed monthly report",
-      "Dedicated support",
-    ],
-    highlight: false,
-  },
-  {
-    id: "enterprise",
-    name: "Enterprise",
-    slug: "enterprise",
-    price: 59900,
-    priceLabel: "$599",
-    linksMin: 60,
-    linksMax: 100,
-    drMin: 60,
-    description: "White-glove, custom strategy",
-    features: [
-      "60–100 editorial placements",
-      "DR 60+ premium domains",
-      "Custom link strategy",
-      "Quarterly SEO audit",
-      "Weekly status updates",
-      "Dedicated account manager",
-    ],
-    highlight: false,
-  },
-] as const;
-
-export type Package = (typeof PACKAGES)[number];
+// Category display config
+export const CATEGORIES: Record<string, { label: string; color: string }> = {
+  "pbn":         { label: "PBN Links",      color: "bg-purple-100 text-purple-700" },
+  "contextual":  { label: "Contextual",     color: "bg-blue-100 text-blue-700" },
+  "edu":         { label: "EDU Backlinks",  color: "bg-green-100 text-green-700" },
+  "seo-package": { label: "SEO Package",    color: "bg-orange-100 text-orange-700" },
+  "boost":       { label: "Authority Boost",color: "bg-rose-100 text-rose-700" },
+  "general":     { label: "General",        color: "bg-gray-100 text-gray-700" },
+};
